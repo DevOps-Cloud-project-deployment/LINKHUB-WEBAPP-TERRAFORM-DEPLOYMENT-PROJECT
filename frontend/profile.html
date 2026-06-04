@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>LinkHub Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Profile Card */
+        .profile-card {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            border: 3px solid white;
+        }
+        
+        .display-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .username {
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 12px;
+        }
+        
+        .bio {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        /* Links Section */
+        .links-section {
+            margin-top: 20px;
+        }
+        
+        .link-card {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .link-button {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .link-icon {
+            font-size: 28px;
+            margin-right: 15px;
+        }
+        
+        .link-info {
+            flex: 1;
+        }
+        
+        .link-platform {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .link-url {
+            font-size: 12px;
+            color: #999;
+            word-break: break-all;
+        }
+        
+        .link-arrow {
+            font-size: 20px;
+            color: #ccc;
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: white;
+        }
+        
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Error State */
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: white;
+        }
+        
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+        }
+        
+        /* Dark Theme Option */
+        body.dark {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        body.dark .link-card {
+            background: #1e1e2e;
+        }
+        
+        body.dark .link-button {
+            color: #eee;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .display-name {
+                font-size: 24px;
+            }
+            
+            .link-button {
+                padding: 14px 16px;
+            }
+            
+            .link-icon {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="content">
+            <div class="loading">
+                <div class="loader"></div>
+                <p>Loading profile...</p>
+            </div>
+        </div>
+        <div class="footer">
+            <p>🔗 LinkHub - One link for all your content</p>
+        </div>
+    </div>
+    
+    <script>
+        // Get username from URL path
+        const username = window.location.pathname.split('/').pop();
+        const API_URL = 'http://localhost:5000';
+        
+        async function loadProfile() {
+            const container = document.getElementById('content');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/profile/${username}`);
+                
+                if (response.ok) {
+                    const profile = await response.json();
+                    renderProfile(profile);
+                } else if (response.status === 404) {
+                    renderError('User not found', 'This profile does not exist');
+                } else {
+                    renderError('Error', 'Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                renderError('Connection Error', 'Unable to connect to server');
+            }
+        }
+        
+        function renderProfile(profile) {
+            const hasLinks = profile.links && profile.links.length > 0;
+            
+            const html = `
+                <div class="profile-card">
+                    <div class="avatar">
+                        ${getAvatarIcon(profile.display_name)}
+                    </div>
+                    <div class="display-name">${escapeHtml(profile.display_name || profile.username)}</div>
+                    <div class="username">@${escapeHtml(profile.username)}</div>
+                    ${profile.bio ? `<div class="bio">${escapeHtml(profile.bio)}</div>` : ''}
+                </div>
+                
+                <div class="links-section">
+                    ${hasLinks ? profile.links.map(link => `
+                        <div class="link-card" onclick="trackAndRedirect(${link.id}, '${escapeHtml(link.url)}')">
+                            <div class="link-button">
+                                <div class="link-icon">${getPlatformIcon(link.platform)}</div>
+                                <div class="link-info">
+                                    <div class="link-platform">${escapeHtml(link.platform)}</div>
+                                    <div class="link-url">${escapeHtml(link.url)}</div>
+                                </div>
+                                <div class="link-arrow">→</div>
+                            </div>
+                        </div>
+                    `).join('') : `
+                        <div class="profile-card">
+                            <div class="bio">No links added yet.</div>
+                        </div>
+                    `}
+                </div>
+            `;
+            
+            document.getElementById('content').innerHTML = html;
+        }
+        
+        function renderError(title, message) {
+            document.getElementById('content').innerHTML = `
+                <div class="error">
+                    <div class="error-icon">⚠️</div>
+                    <h2>${title}</h2>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        async function trackAndRedirect(linkId, url) {
+            try {
+                // Track the click
+                await fetch(`${API_URL}/api/click/${linkId}`, {
+                    method: 'POST'
+                });
+            } catch (error) {
+                console.error('Tracking error:', error);
+            }
+            
+            // Redirect to the actual URL
+            window.location.href = url;
+        }
+        
+        function getAvatarIcon(name) {
+            const letter = (name && name.charAt(0)) || '👤';
+            const emojiMap = {
+                'A': '😊', 'B': '😎', 'C': '🤓', 'D': '🧐', 'E': '🤠',
+                'F': '🦊', 'G': '🐱', 'H': '🐶', 'I': '🦁', 'J': '🐼',
+                'K': '🐨', 'L': '🐸', 'M': '🐙', 'N': '🦄', 'O': '🐧',
+                'P': '🐢', 'Q': '🦋', 'R': '🐳', 'S': '🌈', 'T': '⭐',
+                'U': '🌙', 'V': '☀️', 'W': '🌸', 'X': '🎵', 'Y': '🎨', 'Z': '⚡'
+            };
+            return emojiMap[letter.toUpperCase()] || '👤';
+        }
+        
+        function getPlatformIcon(platform) {
+            const icons = {
+                'Instagram': '📸',
+                'YouTube': '🎥',
+                'Twitter': '🐦',
+                'TikTok': '🎵',
+                'GitHub': '💻',
+                'LinkedIn': '💼',
+                'Facebook': '📘',
+                'Website': '🌐',
+                'Newsletter': '📧',
+                'Podcast': '🎧',
+                'Twitch': '🎮',
+                'Discord': '💬',
+                'Spotify': '🎵',
+                'Medium': '📝',
+                'Patreon': '🎯'
+            };
+            return icons[platform] || '🔗';
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Load profile when page loads
+        loadProfile();
+    </script>
+</body>
+</html>

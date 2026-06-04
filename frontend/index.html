@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkHub - One Link for All Your Content</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .nav-buttons a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        
+        .nav-buttons a:first-child {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .nav-buttons a:last-child {
+            background: white;
+            color: #667eea;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .hero h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 18px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 60px 0;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature h3 {
+            margin: 20px 0 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .hero p { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">🔗 LinkHub</div>
+            <div class="nav-buttons">
+                <a href="login.html">Login</a>
+                <a href="signup.html">Sign Up</a>
+            </div>
+        </nav>
+        
+        <div class="hero">
+            <h1>One Link for All Your Content</h1>
+            <p>Create a beautiful landing page with all your links. <br> Perfect for Instagram, TikTok, and Twitter bios.</p>
+            <a href="signup.html" class="btn">Get Started - It's Free</a>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h2>📱</h2>
+                <h3>Mobile Optimized</h3>
+                <p>Looks perfect on all devices</p>
+            </div>
+            <div class="feature">
+                <h2>📊</h2>
+                <h3>Analytics</h3>
+                <p>Track every click</p>
+            </div>
+            <div class="feature">
+                <h2>🎨</h2>
+                <h3>Customizable</h3>
+                <p>Match your brand colors</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2024 LinkHub - All your links, one place</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LinkHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        nav {
+            background: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+        
+        .logout-btn {
+            background: #ff4757;
+            color: white !important;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Stats Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        /* Add Link Section */
+        .add-link-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        select, input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .add-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Links List */
+        .links-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .link-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .link-icon {
+            font-size: 28px;
+        }
+        
+        .link-details {
+            flex: 1;
+        }
+        
+        .link-platform {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .link-url {
+            color: #666;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        
+        .link-stats {
+            text-align: center;
+            margin-right: 20px;
+        }
+        
+        .click-count {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .delete-btn:hover {
+            background: #ff3747;
+        }
+        
+        .drag-handle {
+            cursor: move;
+            font-size: 20px;
+            color: #999;
+            margin-right: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+        
+        .profile-link {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f0fe;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .profile-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .link-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">🔗 LinkHub</div>
+        <div class="nav-links">
+            <a href="#" id="profileLink">My Page</a>
+            <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Stats Section -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalLinks">0</div>
+                <div class="stat-label">Total Links</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalClicks">0</div>
+                <div class="stat-label">Total Clicks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="topPlatform">-</div>
+                <div class="stat-label">Top Platform</div>
+            </div>
+        </div>
+        
+        <!-- Add Link Section -->
+        <div class="add-link-section">
+            <h3 class="section-title">➕ Add New Link</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Platform</label>
+                    <select id="platform">
+                        <option value="Instagram">📸 Instagram</option>
+                        <option value="YouTube">🎥 YouTube</option>
+                        <option value="Twitter">🐦 Twitter</option>
+                        <option value="TikTok">🎵 TikTok</option>
+                        <option value="GitHub">💻 GitHub</option>
+                        <option value="LinkedIn">💼 LinkedIn</option>
+                        <option value="Facebook">📘 Facebook</option>
+                        <option value="Website">🌐 Website</option>
+                        <option value="Newsletter">📧 Newsletter</option>
+                        <option value="Podcast">🎧 Podcast</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="url" id="url" placeholder="https://..." required>
+                </div>
+                <button class="add-btn" id="addLinkBtn">Add Link</button>
+            </div>
+        </div>
+        
+        <!-- Links List -->
+        <div class="links-section">
+            <h3 class="section-title">🔗 Your Links</h3>
+            <div id="linksList">
+                <div class="empty-state">No links yet. Add your first link above!</div>
+            </div>
+        </div>
+        
+        <!-- Profile Link -->
+        <div class="profile-link">
+            <strong>Your public page:</strong> 
+            <a href="#" id="publicPageLink" target="_blank">Loading...</a>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let currentUser = null;
+        let links = [];
+        
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+        
+        // Load user data
+        async function loadUser() {
+            try {
+                const response = await fetch(`${API_URL}/api/user`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    document.getElementById('publicPageLink').href = `${API_URL}/api/profile/${currentUser.username}`;
+                    document.getElementById('publicPageLink').textContent = `LinkHub/${currentUser.username}`;
+                } else {
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+            }
+        }
+        
+        // Load links
+        async function loadLinks() {
+            try {
+                const response = await fetch(`${API_URL}/api/links`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    links = data.links;
+                    renderLinks();
+                    loadStats();
+                }
+            } catch (error) {
+                console.error('Error loading links:', error);
+            }
+        }
+        
+        // Render links list
+        function renderLinks() {
+            const container = document.getElementById('linksList');
+            
+            if (links.length === 0) {
+                container.innerHTML = '<div class="empty-state">No links yet. Add your first link above!</div>';
+                return;
+            }
+            
+            container.innerHTML = links.map(link => `
+                <div class="link-item" data-id="${link.id}">
+                    <div class="link-info">
+                        <div class="drag-handle">⋮⋮</div>
+                        <div class="link-icon">${getIconForPlatform(link.platform)}</div>
+                        <div class="link-details">
+                            <div class="link-platform">${link.platform}</div>
+                            <div class="link-url">${link.url}</div>
+                        </div>
+                    </div>
+                    <div class="link-stats">
+                        <div class="click-count">${link.clicks || 0}</div>
+                        <div style="font-size: 12px; color: #666;">clicks</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteLink(${link.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+        
+        function getIconForPlatform(platform) {
+            const icons = {
+                'Instagram': '📸',
+                'YouTube': '🎥',
+                'Twitter': '🐦',
+                'TikTok': '🎵',
+                'GitHub': '💻',
+                'LinkedIn': '💼',
+                'Facebook': '📘',
+                'Website': '🌐',
+                'Newsletter': '📧',
+                'Podcast': '🎧'
+            };
+            return icons[platform] || '🔗';
+        }
+        
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/api/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('totalLinks').textContent = stats.total_links || 0;
+                    document.getElementById('totalClicks').textContent = stats.total_clicks || 0;
+                    document.getElementById('topPlatform').textContent = stats.top_link?.platform || '-';
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        // Add link
+        async function addLink() {
+            const platform = document.getElementById('platform').value;
+            const url = document.getElementById('url').value;
+            
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/links`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ platform, url })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('url').value = '';
+                    await loadLinks();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to add link');
+                }
+            } catch (error) {
+                console.error('Error adding link:', error);
+                alert('Connection error');
+            }
+        }
+        
+        // Delete link
+        async function deleteLink(linkId) {
+            if (!confirm('Are you sure you want to delete this link?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/links/${linkId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    await loadLinks();
+                } else {
+                    alert('Failed to delete link');
+                }
+            } catch (error) {
+                console.error('Error deleting link:', error);
+                alert('Connection error');
+            }
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        
+        // Event listeners
+        document.getElementById('addLinkBtn').addEventListener('click', addLink);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('profileLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            const username = currentUser?.username;
+            if (username) {
+                window.open(`${API_URL}/api/profile/${username}`, '_blank');
+            }
+        });
+        
+        // Initialize
+        loadUser();
+        loadLinks();
+    </script>
+</body>
+</html>
