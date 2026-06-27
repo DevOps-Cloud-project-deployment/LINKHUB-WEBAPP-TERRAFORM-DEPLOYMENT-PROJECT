@@ -2,11 +2,15 @@
 # AWS AMPLIFY - Deploy LinkHub Frontend
 # Region: us-east-1
 # ============================================
-
+variable "github_token" {
+  sensitive = true
+}
 # Create Amplify App
 resource "aws_amplify_app" "linkhub" {
   name       = "linkhub-frontend"
   repository = "https://github.com/DevOps-Cloud-project-deployment/LINKHUB-WEBAPP-TERRAFORM-DEPLOYMENT-PROJECT.git"
+
+  access_token = var.github_token
 
   # Build settings for static site
   build_spec = <<-EOT
