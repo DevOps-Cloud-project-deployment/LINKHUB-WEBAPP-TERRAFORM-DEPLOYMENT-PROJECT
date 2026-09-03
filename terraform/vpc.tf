@@ -69,11 +69,11 @@ resource "aws_security_group" "web" {
   }
 
   ingress {
-  from_port   = 5000
-  to_port     = 5000
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-}
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     from_port   = 22

@@ -3,28 +3,34 @@
 # Region: us-east-1
 # ============================================
 variable "github_token" {
-  sensitive = true
+  description = "GitHub personal access token with repo write access for Amplify"
+  sensitive   = true
 }
 # Create Amplify App
 resource "aws_amplify_app" "linkhub" {
   name       = "linkhub-frontend"
   repository = "https://github.com/DevOps-Cloud-project-deployment/LINKHUB-WEBAPP-TERRAFORM-DEPLOYMENT-PROJECT.git"
 
-  access_token = var.github_token
+  # GitHub personal access token with repo write access.
+  # The target repository must allow deploy keys for Amplify to create the initial connection.
+  access_token      = var.github_token
+  platform          = "WEB"
+  enable_basic_auth = false
 
-  # Build settings for static site
-  build_spec = <<-EOT
-    version: 1
-    frontend:
-      phases:
-        build:
-          commands:
-            - echo "No build step needed - static site"
-      artifacts:
-        baseDirectory: frontend
-        files:
-          - '**/*'
-  EOT
+ 
+build_spec = <<-EOT
+  version: 1
+  frontend:
+    phases:
+      build:
+        commands:
+          - echo "No build step needed - static site"
+          - cp -r frontend/* ./
+    artifacts:
+      baseDirectory: .
+      files:
+        - '**/*'
+EOT
 
   # Environment variables
   environment_variables = {
@@ -40,8 +46,8 @@ resource "aws_amplify_app" "linkhub" {
 
 # Create a branch (master)
 resource "aws_amplify_branch" "master" {
-  app_id      = aws_amplify_app.linkhub.id
-  branch_name = "master"          # ← CHANGED to master
+  app_id            = aws_amplify_app.linkhub.id
+  branch_name       = "master" # ← CHANGED to master
   enable_auto_build = true
 
   tags = {

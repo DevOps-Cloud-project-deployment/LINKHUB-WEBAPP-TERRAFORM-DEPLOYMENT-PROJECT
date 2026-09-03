@@ -38,12 +38,12 @@ resource "random_id" "suffix" {
 
 # EC2 Instance
 resource "aws_instance" "linkhub" {
-  ami                    = "ami-0c101f26f147fa7fd"  # Amazon Linux 2 us-east-1
+  ami                    = "ami-0c101f26f147fa7fd" # Amazon Linux 2 us-east-1
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.web.id]
-  key_name               = "linkhub-key"   # ← Changed to string
-  
+  key_name               = "linkhub-key" # ← Changed to string
+
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
