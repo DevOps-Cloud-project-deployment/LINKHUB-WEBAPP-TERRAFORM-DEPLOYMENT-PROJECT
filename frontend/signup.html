@@ -151,7 +151,7 @@
     </div>
     
     <script>
-        const API_URL = 'http://localhost:5000';
+        const API_URL = window._env_.API_URL || 'http://52.23.103.240:5000';
         
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
